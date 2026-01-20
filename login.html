@@ -658,6 +658,9 @@
     const errorMessage = document.getElementById('errorMessage');
     const successMessage = document.getElementById('successMessage');
     const socialButtons = document.querySelectorAll('.social-button');
+    
+    // n8n Auth Webhook URL
+    const AUTH_WEBHOOK_URL = 'https://aryanrpawar.app.n8n.cloud/webhook/auth'; // Replace with your actual n8n webhook URL
 
     // Password Visibility Toggle
     togglePassword.addEventListener('click', function() {
@@ -733,8 +736,8 @@
         return;
       }
       
-      // Simulate login process (in real app, this would be an API call)
-      simulateLogin(email, password);
+      // Perform login
+      performLogin(email, password);
     });
 
     // Social Login Buttons
@@ -777,54 +780,65 @@
       successMessage.classList.add('show');
     }
 
-    function simulateLogin(email, password) {
+    async function performLogin(email, password) {
       // Show loading state on button
       const submitButton = loginForm.querySelector('.login-button');
       const originalText = submitButton.innerHTML;
       submitButton.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Signing In...`;
       submitButton.disabled = true;
       
-      // Get users from localStorage
-      const users = JSON.parse(localStorage.getItem('nyayasulabhUsers') || '[]');
-      
-      // Find user by email
-      const user = users.find(u => u.email === email);
-      
-      // Check if user exists and password matches
-      if (!user) {
-        showError('Invalid email or password');
+      try {
+        const response = await fetch(AUTH_WEBHOOK_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            operation: 'login',
+            email: email,
+            password: password
+          })
+        });
+
+        const rawData = await response.json();
+        const data = Array.isArray(rawData) ? rawData[0] : rawData;
+
+        if (!response.ok || (!data.token && !data.success)) {
+          throw new Error(data.message || data.error || 'Invalid email or password');
+        }
+
+        // Create session data
+        const sessionData = {
+          isLoggedIn: true,
+          token: data.token,
+          email: email,
+          name: data.user?.name || data.name || email.split('@')[0], // Use returned name or fallback
+          timestamp: new Date().getTime()
+        };
+        
+        // Success
+        showSuccess('Login successful! Redirecting to dashboard...');
+        localStorage.setItem('nyayaSession', JSON.stringify(sessionData));
+        
+        if (rememberCheckbox.classList.contains('checked')) {
+          localStorage.setItem('savedEmail', email);
+        }
+        
+        setTimeout(() => {
+          window.location.href = 'interface.html';
+        }, 1500);
+
+      } catch (error) {
+        console.error('Login error:', error);
+        let msg = error.message || 'An error occurred during login. Please try again.';
+        if (msg === 'Failed to fetch') {
+          msg = 'Unable to connect to the server. Please ensure the backend is running.';
+        }
+        showError(msg);
         submitButton.innerHTML = originalText;
         submitButton.disabled = false;
         return;
       }
-      
-      if (user.password !== password) {
-        showError('Invalid email or password');
-        submitButton.innerHTML = originalText;
-        submitButton.disabled = false;
-        return;
-      }
-      
-      // Create session data
-      const sessionData = {
-        isLoggedIn: true,
-        sessionId: 'sess_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
-        email: user.email,
-        name: user.name,
-        timestamp: new Date().getTime()
-      };
-      
-      // Success
-      showSuccess('Login successful! Redirecting to dashboard...');
-      localStorage.setItem('nyayaSession', JSON.stringify(sessionData));
-      
-      if (rememberCheckbox.classList.contains('checked')) {
-        localStorage.setItem('savedEmail', email);
-      }
-      
-      setTimeout(() => {
-        window.location.href = 'interface.html';
-      }, 1500);
     }
 
     // Forgot Password Link

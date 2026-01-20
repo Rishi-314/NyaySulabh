@@ -886,6 +886,35 @@
       30% { transform: translateY(-8px); background-color: var(--gold-primary); }
     }
 
+    /* Language Selection */
+    .language-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .language-btn {
+      padding: 15px;
+      border: 2px solid rgba(26, 45, 78, 0.1);
+      border-radius: 10px;
+      background: var(--white);
+      color: var(--navy-dark);
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    
+    .language-btn:hover {
+      border-color: var(--gold-primary);
+      background: rgba(235, 178, 85, 0.05);
+      transform: translateY(-2px);
+    }
+
     /* Responsive */
     @media (max-width: 1024px) {
       .chat-container {
@@ -1228,6 +1257,31 @@
     </div>
   </div>
 
+  <!-- Language Selection Modal -->
+  <div class="upload-modal active" id="languageModal" style="z-index: 2000; background: rgba(26, 45, 78, 0.9);">
+    <div class="modal-content" style="max-width: 400px;">
+      <div class="modal-header" style="justify-content: center; border-bottom: none; padding-bottom: 0;">
+        <div class="logo-circle" style="width: 60px; height: 60px; font-size: 24px; margin-bottom: 15px;">NS</div>
+      </div>
+      <div class="modal-body" style="text-align: center; padding-top: 10px;">
+        <h3 style="color: var(--navy-dark); margin-bottom: 10px; font-size: 22px;">Select Language</h3>
+        <p style="color: var(--gray-soft); margin-bottom: 25px;">Choose your preferred language for the conversation</p>
+        
+        <div class="language-options">
+          <button class="language-btn" onclick="selectLanguage('English')">
+            <span>English</span>
+          </button>
+          <button class="language-btn" onclick="selectLanguage('Hindi')">
+            <span>Hindi</span> <span style="font-size: 14px; opacity: 0.8;">(हिंदी)</span>
+          </button>
+          <button class="language-btn" onclick="selectLanguage('Marathi')">
+            <span>Marathi</span> <span style="font-size: 14px; opacity: 0.8;">(मराठी)</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     // DOM Elements
     const chatMessages = document.getElementById('chatMessages');
@@ -1254,14 +1308,19 @@
     const profileModal = document.getElementById('profileModal');
     const closeProfileModal = document.getElementById('closeProfileModal');
     const closeProfileBtn = document.getElementById('closeProfileBtn');
+    const languageModal = document.getElementById('languageModal');
 
     // Chat State
     let selectedFileData = null;
     let isUploading = false;
     let chatHistory = [];
+    let currentLanguage = 'English';
     
     // n8n Webhook URL
-    const N8N_WEBHOOK_URL = 'https://genaibuildathon.app.n8n.cloud/webhook/8e069dee-dabc-4363-970e-8800e1eb7fc5';
+    const UPLOAD_WEBHOOK_URL_1 = 'https://aryanrpawar.app.n8n.cloud/webhook/bb506a81-8b70-46c2-8e93-c80353deb07f'; // Primary for AI response
+    const UPLOAD_WEBHOOK_URL_2 = 'https://aryanrpawar.app.n8n.cloud/webhook/14b64ceb-433c-4ea1-9576-19d5d915cf4e'; // Secondary upload endpoint (e.g., for storage)
+    const QUERY_WEBHOOK_URL = 'YOUR_QUERY_WEBHOOK_URL'; // Replace with your actual query webhook URL
+    const AUTH_WEBHOOK_URL = 'https://aryanrpawar.app.n8n.cloud/webhook/auth'; // Replace with your actual n8n webhook URL
 
     // Initialize
     document.addEventListener('DOMContentLoaded', function() {
@@ -1381,7 +1440,22 @@
       });
 
       // Logout button
-      logoutBtn.addEventListener('click', function() {
+      logoutBtn.addEventListener('click', async function() {
+        const session = JSON.parse(localStorage.getItem('nyayaSession') || '{}');
+        if (session.token) {
+          try {
+            await fetch(AUTH_WEBHOOK_URL, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                operation: 'logout',
+                token: session.token
+              })
+            });
+          } catch (e) {
+            console.error('Logout error:', e);
+          }
+        }
         localStorage.removeItem('nyayaSession');
         window.location.href = 'index.html';
       });
@@ -1399,6 +1473,12 @@
     });
 
     // Functions
+    function selectLanguage(lang) {
+      currentLanguage = lang;
+      languageModal.classList.remove('active');
+      addMessage('ai', `Language set to ${lang}. How can I help you today?`);
+    }
+
     async function sendMessage(text = null) {
       const message = text || messageInput.value.trim();
       if (!message) return;
@@ -1414,12 +1494,15 @@
       showTypingIndicator();
       
       try {
-        const response = await fetch(N8N_WEBHOOK_URL, {
+        const response = await fetch(QUERY_WEBHOOK_URL, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ message: message })
+          body: JSON.stringify({ 
+            message: message,
+            language: currentLanguage
+          })
         });
 
         if (!response.ok) {
@@ -1595,9 +1678,9 @@
         return;
       }
       
-      // Validate file size (10MB max)
-      if (file.size > 10 * 1024 * 1024) {
-        alert('File size exceeds 10MB limit. Please choose a smaller file.');
+      // Validate file size (5MB max to prevent server rejection)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('File size exceeds 5MB limit. Please choose a smaller file.');
         return;
       }
       
@@ -1646,13 +1729,28 @@
       
       try {
         const formData = new FormData();
-        formData.append('data', selectedFileData.file);
+        // Use 'data' as the key, which is the default binary property in n8n
+        formData.append('data', selectedFileData.file, selectedFileData.name);
         formData.append('message', `Uploaded document: ${selectedFileData.name}`);
+        formData.append('language', currentLanguage);
 
-        const response = await fetch(N8N_WEBHOOK_URL, {
+        const fetchOptions = {
           method: 'POST',
-          body: formData
-        });
+          body: formData,
+          headers: { 'Accept': 'application/json' }
+        };
+
+        const uploadPromise1 = fetch(UPLOAD_WEBHOOK_URL_1, fetchOptions);
+        const uploadPromise2 = fetch(UPLOAD_WEBHOOK_URL_2, fetchOptions);
+
+        // Wait for both uploads to complete
+        const [response, response2] = await Promise.all([uploadPromise1, uploadPromise2]);
+
+        // Log the status of the second upload for debugging, without interrupting the user flow
+        console.log('Secondary upload status:', response2.status);
+        if (!response2.ok) {
+          console.error('Secondary upload failed:', await response2.text());
+        }
 
         // Get response as text first to handle both JSON and non-JSON responses
         const responseText = await response.text();
