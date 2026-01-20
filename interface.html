@@ -1317,10 +1317,8 @@
     let currentLanguage = 'English';
     
     // n8n Webhook URL
-    const UPLOAD_WEBHOOK_URL_1 = 'https://aryanrpawar.app.n8n.cloud/webhook/bb506a81-8b70-46c2-8e93-c80353deb07f'; // Primary for AI response
-    const UPLOAD_WEBHOOK_URL_2 = 'https://aryanrpawar.app.n8n.cloud/webhook/14b64ceb-433c-4ea1-9576-19d5d915cf4e'; // Secondary upload endpoint (e.g., for storage)
-    const QUERY_WEBHOOK_URL = 'YOUR_QUERY_WEBHOOK_URL'; // Replace with your actual query webhook URL
-    const AUTH_WEBHOOK_URL = 'https://aryanrpawar.app.n8n.cloud/webhook/auth'; // Replace with your actual n8n webhook URL
+    const N8N_WEBHOOK_URL = 'https://aryanrpawar.app.n8n.cloud/webhook/bb506a81-8b70-46c2-8e93-c80353deb07f';
+    const AUTH_WEBHOOK_URL = 'YOUR_N8N_AUTH_WEBHOOK_URL'; // Replace with your actual n8n webhook URL
 
     // Initialize
     document.addEventListener('DOMContentLoaded', function() {
@@ -1494,7 +1492,7 @@
       showTypingIndicator();
       
       try {
-        const response = await fetch(QUERY_WEBHOOK_URL, {
+        const response = await fetch(N8N_WEBHOOK_URL, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -1734,23 +1732,11 @@
         formData.append('message', `Uploaded document: ${selectedFileData.name}`);
         formData.append('language', currentLanguage);
 
-        const fetchOptions = {
+        const response = await fetch(N8N_WEBHOOK_URL, {
           method: 'POST',
           body: formData,
           headers: { 'Accept': 'application/json' }
-        };
-
-        const uploadPromise1 = fetch(UPLOAD_WEBHOOK_URL_1, fetchOptions);
-        const uploadPromise2 = fetch(UPLOAD_WEBHOOK_URL_2, fetchOptions);
-
-        // Wait for both uploads to complete
-        const [response, response2] = await Promise.all([uploadPromise1, uploadPromise2]);
-
-        // Log the status of the second upload for debugging, without interrupting the user flow
-        console.log('Secondary upload status:', response2.status);
-        if (!response2.ok) {
-          console.error('Secondary upload failed:', await response2.text());
-        }
+        });
 
         // Get response as text first to handle both JSON and non-JSON responses
         const responseText = await response.text();
