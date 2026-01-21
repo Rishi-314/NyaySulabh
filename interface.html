@@ -1318,7 +1318,10 @@
     
     // n8n Webhook URLs
     const QUERY_WEBHOOK_URL = 'https://aryanrpawar.app.n8n.cloud/webhook/13109872-1483-481a-b259-f704977f2b28';
-    const UPLOAD_WEBHOOK_URL = 'https://aryanrpawar.app.n8n.cloud/webhook/14b64ceb-433c-4ea1-9576-19d5d915cf4e';
+    // RAG Upload URL (Document upload only)
+    const RAG_UPLOAD_URL = 'https://aryanrpawar.app.n8n.cloud/webhook/14b64ceb-433c-4ea1-9576-19d5d915cf4e';
+    // Summary Upload URL (Returns summary immediately)
+    const SUMMARY_UPLOAD_URL = 'https://aryanrpawar.app.n8n.cloud/webhook/bb506a81-8b70-46c2-8e93-c80353deb07f';
     const AUTH_WEBHOOK_URL = 'https://aryanrpawar.app.n8n.cloud/webhook/auth';
 
     // Initialize
@@ -1725,111 +1728,80 @@
       
       isUploading = true;
       confirmUpload.disabled = true;
-      confirmUpload.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+      confirmUpload.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading & Analyzing...';
       
       try {
-        const formData = new FormData();
-        // Use 'file' as the key, which is expected by the RAG upload webhook
-        formData.append('file', selectedFileData.file, selectedFileData.name);
-        formData.append('message', `Uploaded document: ${selectedFileData.name}`);
-        formData.append('language', currentLanguage);
+        // Create FormData for RAG upload
+        const ragFormData = new FormData();
+        ragFormData.append('file', selectedFileData.file, selectedFileData.name);
+        ragFormData.append('message', `Uploaded document: ${selectedFileData.name}`);
+        ragFormData.append('language', currentLanguage);
 
-        const response = await fetch(UPLOAD_WEBHOOK_URL, {
+        // Create FormData for Summary upload
+        const summaryFormData = new FormData();
+        summaryFormData.append('file', selectedFileData.file, selectedFileData.name);
+        summaryFormData.append('message', `Uploaded document: ${selectedFileData.name}`);
+        summaryFormData.append('language', currentLanguage);
+
+        // Upload to both endpoints in parallel
+        const ragPromise = fetch(RAG_UPLOAD_URL, {
           method: 'POST',
-          body: formData,
+          body: ragFormData,
           headers: { 'Accept': 'application/json' }
         });
 
-        // Get response as text first to handle both JSON and non-JSON responses
-        const responseText = await response.text();
-        console.log('Raw response status:', response.status);
-        console.log('Raw response text:', responseText);
-        
-        if (!response.ok) {
-          let errorData;
-          try {
-            errorData = JSON.parse(responseText);
-          } catch (e) {
-            errorData = { error: responseText || `Server error: ${response.status}` };
-          }
-          throw new Error(errorData.message || errorData.error || `Upload failed with status ${response.status}`);
-        }
-        
-        // Parse response data
-        let responseData;
-        if (!responseText || responseText.trim() === '') {
-          // Empty response - n8n might have processed but didn't return data
-          console.warn('Empty response from n8n');
-          addMessage('user', `Uploaded document: ${selectedFileData.name}`, selectedFileData);
-          addMessage('ai', "Document uploaded successfully! The file has been received and is being processed. You can now ask questions about the document.");
-          isUploading = false;
-          closeUploadModal();
-          confirmUpload.innerHTML = 'Upload Document';
-          confirmUpload.disabled = true;
-          return;
-        }
-        
-        try {
-          responseData = JSON.parse(responseText);
-        } catch (jsonError) {
-          console.error('JSON parsing error:', jsonError);
-          console.error('Response text that failed to parse:', responseText);
-          // If it's not JSON, treat it as plain text response
-          responseData = { text: responseText };
-        }
-        
-        // Debug: Log the response structure
-        console.log('Parsed response data:', responseData);
+        const summaryPromise = fetch(SUMMARY_UPLOAD_URL, {
+          method: 'POST',
+          body: summaryFormData,
+          headers: { 'Accept': 'application/json' }
+        });
+
+        // Wait for both, but we prioritize the summary response for the UI
+        const [ragResponse, summaryResponse] = await Promise.all([ragPromise, summaryPromise]);
+
+        // Process Summary Response (Primary)
+        const summaryText = await summaryResponse.text();
+        console.log('Summary response:', summaryText);
 
         // Add document message to chat
         addMessage('user', `Uploaded document: ${selectedFileData.name}`, selectedFileData);
         
-        // Extract AI response from the complex nested structure
         let aiResponse = '';
         
-        // Handle the array response structure shown in your example
-        if (Array.isArray(responseData)) {
-          // Your example shows an array with one object
-          const firstItem = responseData[0];
-          
-          if (firstItem && firstItem.content && firstItem.content.parts && 
-              Array.isArray(firstItem.content.parts) && firstItem.content.parts.length > 0) {
-            // Extract text from the first part
-            aiResponse = firstItem.content.parts[0].text || '';
+        if (summaryResponse.ok) {
+          try {
+            // Try parsing as JSON first
+            const responseData = JSON.parse(summaryText);
+            
+            // Handle various response structures
+            if (Array.isArray(responseData) && responseData[0]?.content?.parts?.[0]?.text) {
+              aiResponse = responseData[0].content.parts[0].text;
+            } else if (responseData?.content?.parts?.[0]?.text) {
+              aiResponse = responseData.content.parts[0].text;
+            } else if (responseData?.candidates?.[0]?.content?.parts?.[0]?.text) {
+              aiResponse = responseData.candidates[0].content.parts[0].text;
+            } else if (responseData.response || responseData.message || responseData.summary || responseData.text) {
+              aiResponse = responseData.response || responseData.message || responseData.summary || responseData.text;
+            } else {
+              aiResponse = typeof responseData === 'string' ? responseData : JSON.stringify(responseData, null, 2);
+            }
+          } catch (e) {
+            // If not JSON, use raw text
+            aiResponse = summaryText;
           }
-        } 
-        // Also handle if it's a single object instead of array
-        else if (responseData && responseData.content && responseData.content.parts && 
-                Array.isArray(responseData.content.parts) && responseData.content.parts.length > 0) {
-          aiResponse = responseData.content.parts[0].text || '';
-        }
-        // Handle Gemini response structure (candidates array)
-        else if (responseData.candidates && Array.isArray(responseData.candidates) && responseData.candidates.length > 0) {
-             const firstCandidate = responseData.candidates[0];
-             if (firstCandidate.content && firstCandidate.content.parts && 
-                 Array.isArray(firstCandidate.content.parts) && firstCandidate.content.parts.length > 0) {
-                 aiResponse = firstCandidate.content.parts[0].text || '';
-             }
-        }
-        // Fallback: try to find any text response in the object
-        else if (responseData.response || responseData.message || responseData.summary || responseData.text) {
-          aiResponse = responseData.response || responseData.message || responseData.summary || responseData.text;
-        }
-        // Last resort: stringify the response
-        else {
-          aiResponse = JSON.stringify(responseData, null, 2);
-        }
-        
-        // Clean up the response if needed
-        if (typeof aiResponse === 'object') {
-          aiResponse = JSON.stringify(aiResponse, null, 2);
+        } else {
+          aiResponse = "Document uploaded, but I couldn't generate a summary. You can still ask questions about it.";
+          console.error('Summary upload failed:', summaryResponse.status);
         }
         
         // Display the AI response
         if (aiResponse) {
           addMessage('ai', aiResponse);
-        } else {
-          addMessage('ai', "I've analyzed your document but couldn't extract a response. Here's what I received: " + JSON.stringify(responseData, null, 2));
+        }
+        
+        // Log RAG status
+        if (!ragResponse.ok) {
+          console.warn('RAG upload failed:', ragResponse.status);
         }
         
       } catch (error) {
