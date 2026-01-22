@@ -1003,74 +1003,6 @@
       transform: none !important;
     }
 
-    /* Audio Waveform */
-    .audio-waveform {
-      display: flex;
-      justify-content: center;
-      gap: 3px;
-      height: 40px;
-      align-items: center;
-      margin: 20px 0;
-    }
-
-    .wave-bar {
-      width: 4px;
-      height: 10px;
-      background: var(--gold-primary);
-      border-radius: 2px;
-      animation: voicePulse 0.8s infinite ease-in-out;
-    }
-
-    .wave-bar:nth-child(2) { animation-delay: 0.1s; }
-    .wave-bar:nth-child(3) { animation-delay: 0.2s; }
-    .wave-bar:nth-child(4) { animation-delay: 0.3s; }
-    .wave-bar:nth-child(5) { animation-delay: 0.4s; }
-    .wave-bar:nth-child(6) { animation-delay: 0.5s; }
-    .wave-bar:nth-child(7) { animation-delay: 0.6s; }
-
-    /* Voice Message */
-    .voice-message {
-      border: 2px dashed rgba(26, 45, 78, 0.1);
-      background: rgba(235, 178, 85, 0.05) !important;
-      padding: 15px;
-    }
-
-    .voice-info {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .voice-icon {
-      width: 40px;
-      height: 40px;
-      background: rgba(235, 178, 85, 0.1);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--gold-primary);
-      font-size: 18px;
-    }
-
-    .voice-details {
-      flex: 1;
-    }
-
-    .voice-name {
-      font-weight: 600;
-      color: var(--navy-dark);
-      margin-bottom: 4px;
-      font-size: 14px;
-    }
-
-    .voice-meta {
-      font-size: 12px;
-      color: var(--gray-soft);
-      display: flex;
-      gap: 15px;
-    }
-
     /* Language Selection */
     .language-options {
       display: flex;
@@ -1358,7 +1290,7 @@
           <textarea 
             class="message-input" 
             id="messageInput" 
-            placeholder="Type your legal question here... PLEASE SPECIFY FILE NAME WHILE ASKING QUERY(Press Enter to send, Shift+Enter for new line) Or click the microphone for voice input"
+            placeholder="Type your legal question here... (Press Enter to send, Shift+Enter for new line) Or click the microphone for voice input"
             rows="1"
           ></textarea>
           
@@ -1371,19 +1303,17 @@
         <div class="voice-status" id="voiceStatus" style="display: none; margin-top: 10px; text-align: center;">
           <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
             <i class="fas fa-microphone" style="color: var(--gold-primary);"></i>
-            <span style="color: var(--navy-dark); font-weight: 600;">Recording audio... Speak now</span>
-            <div class="audio-waveform">
-              <div class="wave-bar"></div>
-              <div class="wave-bar"></div>
-              <div class="wave-bar"></div>
-              <div class="wave-bar"></div>
-              <div class="wave-bar"></div>
-              <div class="wave-bar"></div>
-              <div class="wave-bar"></div>
+            <span style="color: var(--navy-dark); font-weight: 600;">Listening... Speak now</span>
+            <div style="display: flex; gap: 3px; align-items: center;">
+              <div style="width: 4px; height: 8px; background: var(--gold-primary); border-radius: 2px; animation: voicePulse 0.8s infinite ease-in-out;"></div>
+              <div style="width: 4px; height: 12px; background: var(--gold-primary); border-radius: 2px; animation: voicePulse 0.8s infinite ease-in-out 0.1s;"></div>
+              <div style="width: 4px; height: 16px; background: var(--gold-primary); border-radius: 2px; animation: voicePulse 0.8s infinite ease-in-out 0.2s;"></div>
+              <div style="width: 4px; height: 12px; background: var(--gold-primary); border-radius: 2px; animation: voicePulse 0.8s infinite ease-in-out 0.3s;"></div>
+              <div style="width: 4px; height: 8px; background: var(--gold-primary); border-radius: 2px; animation: voicePulse 0.8s infinite ease-in-out 0.4s;"></div>
             </div>
           </div>
           <button id="stopVoiceBtn" style="margin-top: 8px; padding: 6px 15px; background: var(--navy-dark); color: white; border: none; border-radius: 6px; font-size: 12px; cursor: pointer;">
-            <i class="fas fa-stop"></i> Stop & Send
+            <i class="fas fa-stop"></i> Stop Listening
           </button>
         </div>
       </div>
@@ -1497,34 +1427,30 @@
           <i class="fas fa-microphone"></i>
         </div>
         
-        <div class="voice-modal-text" id="voiceModalTitle">Recording Audio</div>
-        <div class="voice-modal-subtext" id="voiceModalSubtitle">Speak your legal question clearly</div>
+        <div class="voice-modal-text" id="voiceModalTitle">Speak your legal question</div>
+        <div class="voice-modal-subtext" id="voiceModalSubtitle">Click microphone and speak clearly</div>
         
         <div class="voice-modal-transcript" id="voiceTranscript">
-          <i style="color: var(--gray-soft);">Audio recording in progress...</i>
+          <i style="color: var(--gray-soft);">Your speech will appear here...</i>
         </div>
         
         <div style="margin: 30px 0;">
-          <div class="audio-waveform">
-            <div class="wave-bar"></div>
-            <div class="wave-bar"></div>
-            <div class="wave-bar"></div>
-            <div class="wave-bar"></div>
-            <div class="wave-bar"></div>
-            <div class="wave-bar"></div>
-            <div class="wave-bar"></div>
+          <div style="display: flex; justify-content: center; gap: 6px; height: 40px; align-items: center;">
+            <div style="width: 6px; height: 10px; background: var(--gold-primary); border-radius: 3px; animation: voicePulse 0.8s infinite ease-in-out;"></div>
+            <div style="width: 6px; height: 20px; background: var(--gold-primary); border-radius: 3px; animation: voicePulse 0.8s infinite ease-in-out 0.1s;"></div>
+            <div style="width: 6px; height: 30px; background: var(--gold-primary); border-radius: 3px; animation: voicePulse 0.8s infinite ease-in-out 0.2s;"></div>
+            <div style="width: 6px; height: 40px; background: var(--gold-primary); border-radius: 3px; animation: voicePulse 0.8s infinite ease-in-out 0.3s;"></div>
+            <div style="width: 6px; height: 30px; background: var(--gold-primary); border-radius: 3px; animation: voicePulse 0.8s infinite ease-in-out 0.4s;"></div>
+            <div style="width: 6px; height: 20px; background: var(--gold-primary); border-radius: 3px; animation: voicePulse 0.8s infinite ease-in-out 0.5s;"></div>
+            <div style="width: 6px; height: 10px; background: var(--gold-primary); border-radius: 3px; animation: voicePulse 0.8s infinite ease-in-out 0.6s;"></div>
           </div>
-        </div>
-        
-        <div style="color: var(--gray-soft); font-size: 13px; margin-top: 20px;">
-          <i class="fas fa-info-circle"></i> Recording audio to send to AI...
         </div>
       </div>
       
       <div class="modal-footer">
         <button class="modal-btn cancel" id="cancelVoice">Cancel</button>
         <button class="modal-btn upload" id="sendVoice" disabled>
-          <i class="fas fa-paper-plane"></i> Send Audio
+          <i class="fas fa-paper-plane"></i> Send to AI
         </button>
       </div>
     </div>
@@ -1601,17 +1527,17 @@
     let chatHistory = [];
     let currentLanguage = 'English';
     
-    // Voice/Audio State
-    let mediaRecorder = null;
-    let audioChunks = [];
-    let isRecording = false;
-    let audioBlob = null;
+    // Voice State
+    let recognition = null;
+    let isListening = false;
+    let finalTranscript = '';
+    let interimTranscript = '';
     
     // n8n Webhook URLs
     const QUERY_WEBHOOK_URL = 'https://genaibuildathon.app.n8n.cloud/webhook/query';
-    const RAG_UPLOAD_URL = 'https://aryanrpawar.app.n8n.cloud/webhook/14b64ceb-433c-4ea1-9576-19d5d915cf4e';
-    const SUMMARY_UPLOAD_URL = 'https://aryanrpawar.app.n8n.cloud/webhook/bb506a81-8b70-46c2-8e93-c80353deb07f';
-    const AUTH_WEBHOOK_URL = 'https://aryanrpawar.app.n8n.cloud/webhook/auth';
+    const RAG_UPLOAD_URL = 'https://genaibuildathon.app.n8n.cloud/webhook/uplaod-url';
+    const SUMMARY_UPLOAD_URL = 'https://genaibuildathon.app.n8n.cloud/webhook/summary';
+    const AUTH_WEBHOOK_URL = 'https://genaibuildathon.app.n8n.cloud/webhook/auth';
 
     // Initialize
     document.addEventListener('DOMContentLoaded', function() {
@@ -1638,6 +1564,9 @@
 
       // Add welcome message
       addWelcomeMessage();
+
+      // Initialize Voice Recognition
+      initVoiceRecognition();
 
       // Check for upload action from URL parameters
       const urlParams = new URLSearchParams(window.location.search);
@@ -1765,179 +1694,147 @@
       closeProfileModal.addEventListener('click', () => profileModal.classList.remove('active'));
       closeProfileBtn.addEventListener('click', () => profileModal.classList.remove('active'));
 
-      // Voice/Audio Listeners
-      voiceButton.addEventListener('click', toggleAudioRecording);
-      stopVoiceBtn.addEventListener('click', stopAudioRecording);
-      closeVoiceModal.addEventListener('click', stopAudioRecording);
-      cancelVoice.addEventListener('click', stopAudioRecording);
-      sendVoice.addEventListener('click', sendAudioToN8N);
+      // Voice Modal Listeners
+      closeVoiceModal.addEventListener('click', stopRecognition);
+      cancelVoice.addEventListener('click', stopRecognition);
+      sendVoice.addEventListener('click', sendVoiceInput);
+      stopVoiceBtn.addEventListener('click', stopRecognition);
+      voiceButton.addEventListener('click', startVoiceRecognition);
 
       // Voice modal background click
       voiceModal.addEventListener('click', function(e) {
         if (e.target === voiceModal) {
-          stopAudioRecording();
+          stopRecognition();
         }
       });
     });
 
-    // Audio Recording Functions
-    async function toggleAudioRecording() {
-      if (isRecording) {
-        stopAudioRecording();
-      } else {
-        startAudioRecording();
-      }
-    }
+    // Voice Functions
+    function initVoiceRecognition() {
+      // Check for browser support
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-    async function startAudioRecording() {
-      try {
-        // Request microphone access
-        const stream = await navigator.mediaDevices.getUserMedia({ 
-          audio: {
-            channelCount: 1,
-            sampleRate: 16000,
-            echoCancellation: true,
-            noiseSuppression: true
-          }
-        });
-        
-        // Create MediaRecorder
-        mediaRecorder = new MediaRecorder(stream, {
-          mimeType: 'audio/webm;codecs=opus'
-        });
-        
-        // Reset audio chunks
-        audioChunks = [];
-        
-        // Set up event handlers
-        mediaRecorder.ondataavailable = function(event) {
-          if (event.data.size > 0) {
-            audioChunks.push(event.data);
-          }
-        };
-        
-        mediaRecorder.onstop = function() {
-          // Create audio blob
-          audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-          
-          // Stop all tracks
-          stream.getTracks().forEach(track => track.stop());
-          
-          // Update UI
-          voiceButton.classList.remove('voice-recording');
-          voiceStatus.style.display = 'none';
-          voiceModalTitle.textContent = 'Audio Recorded';
-          voiceModalSubtitle.textContent = 'Ready to send to AI';
-          voiceTranscript.innerHTML = '<i style="color: var(--gray-soft);">Audio recorded successfully. Click "Send Audio" to process.</i>';
-          sendVoice.disabled = false;
-          
-          // Hide modal after 2 seconds
-          setTimeout(() => {
-            voiceModal.classList.remove('active');
-            document.body.style.overflow = 'auto';
-          }, 2000);
-        };
-        
-        mediaRecorder.onerror = function(event) {
-          console.error('MediaRecorder error:', event.error);
-          alert('Error recording audio. Please try again.');
-          stopAudioRecording();
-        };
-        
-        // Start recording
-        mediaRecorder.start(100); // Collect data every 100ms
-        isRecording = true;
-        
-        // Update UI
+      if (!SpeechRecognition) {
+        voiceButton.style.display = 'none';
+        console.warn('Speech recognition not supported in this browser.');
+        return;
+      }
+
+      recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = getVoiceLanguageCode(currentLanguage);
+
+      recognition.onstart = function() {
+        console.log('Voice recognition started');
+        isListening = true;
         voiceButton.classList.add('voice-recording');
         voiceStatus.style.display = 'block';
         showVoiceModal();
-        voiceModalTitle.textContent = 'Recording Audio';
-        voiceModalSubtitle.textContent = 'Speak your legal question clearly';
-        voiceTranscript.innerHTML = '<i style="color: var(--gray-soft);">Recording in progress... Speak now.</i>';
-        sendVoice.disabled = true;
-        
-      } catch (error) {
-        console.error('Error accessing microphone:', error);
-        if (error.name === 'NotAllowedError') {
-          alert('Microphone access denied. Please allow microphone access in your browser settings.');
-        } else if (error.name === 'NotFoundError') {
-          alert('No microphone found. Please connect a microphone and try again.');
-        } else {
-          alert('Error accessing microphone: ' + error.message);
+      };
+
+      recognition.onresult = function(event) {
+        interimTranscript = '';
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            finalTranscript += event.results[i][0].transcript;
+          } else {
+            interimTranscript += event.results[i][0].transcript;
+          }
         }
+        
+        // Update transcript display
+        const displayText = finalTranscript + interimTranscript;
+        voiceTranscript.innerHTML = displayText || '<i style="color: var(--gray-soft);">Your speech will appear here...</i>';
+        
+        // Enable send button if we have text
+        if (finalTranscript.trim().length > 0) {
+          sendVoice.disabled = false;
+        }
+      };
+
+      recognition.onerror = function(event) {
+        console.error('Speech recognition error:', event.error);
+        if (event.error === 'no-speech') {
+          voiceModalSubtitle.textContent = 'No speech detected. Please try again.';
+        } else if (event.error === 'audio-capture') {
+          voiceModalSubtitle.textContent = 'No microphone found. Please check your microphone.';
+        } else if (event.error === 'not-allowed') {
+          voiceModalSubtitle.textContent = 'Microphone access denied. Please allow microphone access.';
+        } else {
+          voiceModalSubtitle.textContent = 'Error: ' + event.error;
+        }
+        stopRecognition();
+      };
+
+      recognition.onend = function() {
+        console.log('Voice recognition ended');
+        stopRecognition();
+      };
+    }
+
+    function getVoiceLanguageCode(lang) {
+      switch(lang) {
+        case 'Hindi': return 'hi-IN';
+        case 'Marathi': return 'mr-IN';
+        default: return 'en-US';
       }
     }
 
-    function stopAudioRecording() {
-      if (mediaRecorder && isRecording) {
-        mediaRecorder.stop();
-        isRecording = false;
-      }
-    }
-
-    async function sendAudioToN8N() {
-      if (!audioBlob) {
-        alert('No audio recorded. Please record audio first.');
+    function startVoiceRecognition() {
+      if (!recognition) {
+        alert('Voice input not supported in this browser. Please use Chrome or Edge.');
         return;
       }
       
-      // Create user message for voice input
-      addMessage('user', 'Voice message', {
-        name: 'voice_message.webm',
-        size: formatFileSize(audioBlob.size),
-        type: 'audio'
-      });
-      
-      // Show typing indicator
-      showTypingIndicator();
-      
-      try {
-        // Create FormData as per your n8n contract
-        const formData = new FormData();
-        formData.append('audio', audioBlob, 'voice_message.webm');
-        formData.append('sessionId', localStorage.getItem('nyayaSession') ? JSON.parse(localStorage.getItem('nyayaSession')).email : 'guest');
-        
-        // Convert language to code format
-        let languageCode = 'en';
-        switch(currentLanguage) {
-          case 'Hindi': languageCode = 'hi'; break;
-          case 'Marathi': languageCode = 'mr'; break;
-          default: languageCode = 'en';
-        }
-        formData.append('language', languageCode);
-        
-        console.log('Sending audio to n8n:', {
-          fileSize: audioBlob.size,
-          language: languageCode,
-          sessionId: localStorage.getItem('nyayaSession') ? JSON.parse(localStorage.getItem('nyayaSession')).email : 'guest'
-        });
-        
-        // Send to n8n webhook
-        const response = await fetch(QUERY_WEBHOOK_URL, {
-          method: 'POST',
-          body: formData
-        });
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`HTTP ${response.status}: ${response.statusText} - ${errorText}`);
-        }
-
-        // Get response as plain text
-        const aiResponse = await response.text();
-        
-        hideTypingIndicator();
-        addMessage('ai', aiResponse || "I received your voice message.");
-        
-        // Reset audio blob
-        audioBlob = null;
-        
-      } catch (error) {
-        console.error('Error sending audio to n8n:', error);
-        hideTypingIndicator();
-        addMessage('ai', "Sorry, I'm having trouble processing your voice message. Please try again.");
+      if (isListening) {
+        stopRecognition();
+        return;
       }
+      
+      // Reset transcripts
+      finalTranscript = '';
+      interimTranscript = '';
+      voiceTranscript.innerHTML = '<i style="color: var(--gray-soft);">Your speech will appear here...</i>';
+      sendVoice.disabled = true;
+      voiceModalTitle.textContent = 'Voice Input';
+      voiceModalSubtitle.textContent = 'Speak your legal question';
+      
+      // Update language for recognition
+      recognition.lang = getVoiceLanguageCode(currentLanguage);
+      
+      // Request microphone permission
+      navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(function(stream) {
+          // Stop tracks to release microphone
+          stream.getTracks().forEach(track => track.stop());
+          
+          try {
+            recognition.start();
+          } catch (e) {
+            console.error('Error starting recognition:', e);
+            alert('Error starting voice recognition. Please try again.');
+          }
+        })
+        .catch(function(err) {
+          console.error('Microphone access denied:', err);
+          alert('Microphone access is required for voice input. Please allow microphone access in your browser settings.');
+        });
+    }
+
+    function stopRecognition() {
+      if (recognition && isListening) {
+        try {
+          recognition.stop();
+        } catch (e) {
+          console.error('Error stopping recognition:', e);
+        }
+      }
+      
+      isListening = false;
+      voiceButton.classList.remove('voice-recording');
+      voiceStatus.style.display = 'none';
+      hideVoiceModal();
     }
 
     function showVoiceModal() {
@@ -1945,11 +1842,28 @@
       document.body.style.overflow = 'hidden';
     }
 
+    function hideVoiceModal() {
+      voiceModal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    }
+
+    function sendVoiceInput() {
+      if (finalTranscript.trim()) {
+        sendMessage(finalTranscript);
+        hideVoiceModal();
+      }
+    }
+
     // Core Functions
     function selectLanguage(lang) {
       currentLanguage = lang;
       languageModal.classList.remove('active');
       addMessage('ai', `Language set to ${lang}. How can I help you today?`);
+      
+      // Update speech recognition language if supported
+      if (recognition) {
+        recognition.lang = getVoiceLanguageCode(lang);
+      }
     }
 
     function addWelcomeMessage() {
@@ -2000,29 +1914,21 @@
       showTypingIndicator();
       
       try {
-        // Create FormData as per your n8n contract
-        const formData = new FormData();
-        formData.append('chatInput', message);
-        formData.append('sessionId', localStorage.getItem('nyayaSession') ? JSON.parse(localStorage.getItem('nyayaSession')).email : 'guest');
-        
-        // Convert language to code format
-        let languageCode = 'en';
-        switch(currentLanguage) {
-          case 'Hindi': languageCode = 'hi'; break;
-          case 'Marathi': languageCode = 'mr'; break;
-          default: languageCode = 'en';
-        }
-        formData.append('language', languageCode);
-        
-        // Send to n8n webhook
         const response = await fetch(QUERY_WEBHOOK_URL, {
           method: 'POST',
-          body: formData
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ 
+            chatInput: message,
+            sessionId: localStorage.getItem('nyayaSession') ? JSON.parse(localStorage.getItem('nyayaSession')).email : 'guest',
+            language: currentLanguage
+          })
         });
 
         if (!response.ok) {
           const errorText = await response.text();
-          throw new Error(`HTTP ${response.status}: ${response.statusText} - ${errorText}`);
+          throw new Error(`Server error: ${response.status} - ${errorText}`);
         }
 
         // Get response as plain text
@@ -2045,27 +1951,7 @@
       
       let contentHTML = '';
       
-      if (fileData && fileData.type === 'audio') {
-        // Voice message
-        contentHTML = `
-          <div class="message-content voice-message">
-            <div class="voice-info">
-              <div class="voice-icon">
-                <i class="fas fa-microphone"></i>
-              </div>
-              <div class="voice-details">
-                <div class="voice-name">Voice Message</div>
-                <div class="voice-meta">
-                  <span>${fileData.size}</span>
-                  <span>AUDIO</span>
-                </div>
-              </div>
-            </div>
-            <div class="message-time">${time}</div>
-          </div>
-        `;
-      } else if (fileData) {
-        // Document message
+      if (fileData) {
         contentHTML = `
           <div class="message-content document-message">
             <div class="document-info">
@@ -2092,7 +1978,6 @@
           </div>
         `;
       } else {
-        // Text message
         contentHTML = `
           <div class="message-content">
             <div class="message-text">${formatMessageText(text)}</div>
@@ -2119,7 +2004,7 @@
       // Add to chat history
       chatHistory.push({
         type,
-        text: fileData ? (fileData.type === 'audio' ? 'Voice message' : `Uploaded: ${fileData.name}`) : text,
+        text: fileData ? `Uploaded: ${fileData.name}` : text,
         time,
         fileData
       });
