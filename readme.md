@@ -93,7 +93,7 @@ cd nyayasulabh
 
 ### 5. Start the Application
 - Open the HTML files in a web browser, or serve them using a local server:
-  - Access the application at https://nyay-sulabh.vercel.app/
+  - Access the application at http://localhost:8000/index.html
 
 ## 📖 Usage
 ### Getting Started
@@ -146,9 +146,8 @@ We welcome contributions to NyayaSulabh! Please follow these steps:
 - Update documentation for new features
 
 ## 📞 Contact & Support
-- Project Lead: [Your Name]
 - Email: contact@nyayasulabh.com
-- Website: [Your website URL]
+- Website: [[Your website URL](https://nyay-sulabh.vercel.app/)]
 - GitHub Issues: For bug reports and feature requests
 
 ## 🙏 Acknowledgments
