@@ -1,14 +1,10 @@
 # NyayaSulabh - Accessible Justice Platform
 
-![NyayaSulabh Logo](Images/logo.png)
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
 [![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat&logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS)
 [![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 [![n8n](https://img.shields.io/badge/n8n-FF6B35?style=flat&logo=n8n&logoColor=white)](https://n8n.io/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=flat&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
-[![Redis](https://img.shields.io/badge/Redis-DC382D?style=flat&logo=redis&logoColor=white)](https://redis.io/)
 
 > **Democratizing Justice Through AI** 🚀
 
@@ -23,7 +19,6 @@ NyayaSulabh is an AI-powered legal document analysis platform designed to democr
 - [📖 Usage](#-usage)
 - [🔌 API/Webhook Details](#-apiwebhook-details)
 - [🤝 Contributing](#-contributing)
-- [📄 License](#-license)
 - [📞 Contact & Support](#-contact--support)
 - [🙏 Acknowledgments](#-acknowledgments)
 
@@ -41,7 +36,6 @@ NyayaSulabh is an AI-powered legal document analysis platform designed to democr
 - 🔐 **Secure Authentication**: JWT-based user authentication with session management
 - 📝 **User Registration & Login**: Multi-step signup process with password strength validation
 - 👤 **Profile Management**: User dashboard with session tracking
-- 💾 **Session Persistence**: Redis-backed session storage for reliable user experience
 
 ### Technical Features
 - 🔍 **RAG-Based Validation**: Retrieval-Augmented Generation for accurate legal information grounding
@@ -55,17 +49,15 @@ NyayaSulabh is an AI-powered legal document analysis platform designed to democr
 | Category | Technologies |
 |----------|--------------|
 | **Frontend** | ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=html5&logoColor=white) HTML5, ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat&logo=css3&logoColor=white) CSS3, ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black) JavaScript (ES6+), Font Awesome |
-| **Backend & Infrastructure** | ![n8n](https://img.shields.io/badge/n8n-FF6B35?style=flat&logo=n8n&logoColor=white) n8n, ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=flat&logo=postgresql&logoColor=white) PostgreSQL, ![Redis](https://img.shields.io/badge/Redis-DC382D?style=flat&logo=redis&logoColor=white) Redis, JWT |
+| **Backend & Infrastructure** | ![n8n](https://img.shields.io/badge/n8n-FF6B35?style=flat&logo=n8n&logoColor=white) n8n, ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=flat&logo=postgresql&logoColor=white) PostgreSQL, 
 | **AI & APIs** | Google Gemini API, Webhook APIs |
 
 ## 📋 Prerequisites
 
 Before running this project, ensure you have the following installed:
 
-- 🟢 **Node.js** (v16 or higher)
 - 🔄 **n8n** (latest version)
 - 🗄️ **PostgreSQL** database
-- 💾 **Redis** server
 - 📦 **Git** for version control
 
 ## 🔧 Installation & Setup
@@ -90,8 +82,6 @@ cd nyayasulabh
   - Import the `User Authentication` and `Summarization_n8n.json` file
   - Configure the following credentials:
     - PostgreSQL: Set up connection to your Postgres database
-    - Redis: Configure Redis connection
-    - JWT Auth: Set up JWT secret key
     - Google Gemini API: Add your API key
 
 ### 3. Database Setup
@@ -103,7 +93,7 @@ cd nyayasulabh
 
 ### 5. Start the Application
 - Open the HTML files in a web browser, or serve them using a local server:
-  - Access the application at http://localhost:8000/index.html
+  - Access the application at https://nyay-sulabh.vercel.app/
 
 ## 📖 Usage
 ### Getting Started
@@ -154,9 +144,6 @@ We welcome contributions to NyayaSulabh! Please follow these steps:
 - Test authentication flows thoroughly
 - Add comments for complex logic
 - Update documentation for new features
-
-## 📄 License
-This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## 📞 Contact & Support
 - Project Lead: [Your Name]
